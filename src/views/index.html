@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boku SERVER</title>
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <script src="https://code.jquery.com/jquery-3.4.0.min.js"
+    integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+  <script type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
+  <script src="/static/js/app.js"></script>
+</head>
+
+<body>
+
+  <div class="board">
+    <div class="background-ui">
+      <div class="up"></div>
+      <div class="middle"></div>
+      <div class="down"></div>
+    </div>
+    <div id="rc"></div>
+  </div>
+
+  <div style="width:300px;margin-top:50px">
+    <table border="1">
+      <thead>
+        <tr>
+          <td><strong>Turno</strong></td>
+          <td><span id="jogador">1</span></td>
+        </tr>
+        <tr>
+          <td><strong>Status</strong></td>
+          <td><span id="estado">Aguardando movimento</span></td>
+        </tr>
+        <tr>
+          <td><strong>Numero de movimentos</strong></td>
+          <td><span id="movimentos">0</span></td>
+        </tr>
+        <tr>
+          <td><strong>Ultima jogada</strong></td>
+          <td><span id="ultima_jogada">{"column":-1,"line":-1}</span></td>
+        </tr>
+
+      </thead>
+    </table>
+    <input type="button" value="Atualizar" style="margin-top:20px" onClick="atualiza();">
+    <input type="button" value="Reiniciar" style="margin-top:20px" onClick="reiniciar();">
+  </div>
+
+
+</body>
+
+</html>
