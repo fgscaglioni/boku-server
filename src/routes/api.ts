@@ -20,6 +20,20 @@ module.exports = (app: express.Application, io: socketio.Server) => {
     });
   });
 
+  app.get("/game_status", (req, res) => {
+
+    let result = {
+      player: game.player,
+      board: game.board,
+      final: game.is_final_state(),
+      available_moviments: game.get_available_moves(),
+      num_movimentos: game.movements,
+      last_move: { column: game.last_column, line: game.last_line }
+    }
+
+    res.json(result)
+  });
+
   app.get("/is_my_turn", (req, res) => {
     // console.log(req.query, game.player);
     const player = req.query.player;
