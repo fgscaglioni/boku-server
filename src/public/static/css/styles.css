@@ -1,3 +1,10 @@
+:root {
+  --background-board-color: white;
+  --board-color: #007bff;
+  --player1-color: red;
+  --player2-color: green;
+}
+
 #tabuleiro div {
   width: 10px;
   height: 10px;
@@ -5,36 +12,37 @@
 
 .board {
   position: relative;
+  background: var(--background-board-color);
+  width: 276px;
+  height: 304px;
+  padding: 20px;
 }
+
 .background-ui {
   width: 276px;
   height: 345px;
   float: left;
 }
-.up, .down {
+
+.up,
+.down {
   width: 0;
   height: 0;
   border-style: solid;
   border-width: 0 138px 85px 138px;
-  border-color: transparent transparent #007bff transparent;
+  border-color: transparent transparent var(--board-color) transparent;
 }
 .middle {
-  background-color: #007bff;
+  background-color: var(--board-color);
   height: 134px;
 }
 .down {
-  /* width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 85px 150px 0 150px;
-  border-color: #007bff transparent transparent transparent; */
   transform: rotate(180deg);
 }
 #rc {
   position: absolute;
   /* padding-top: 14px; */
 }
-
 
 .column {
   /* background-color: silver; */
@@ -53,8 +61,8 @@
 }
 
 .player1 {
-  background-color: red;
+  background-color: var(--player1-color);
 }
 .player2 {
-  background-color: green;
+  background-color: var(--player2-color);
 }
