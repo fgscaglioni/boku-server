@@ -35,6 +35,8 @@ function drawBoard(board) {
     for (let l = 0; l < board[c].length; l++) {
       let line = document.createElement('div')
       const playerClass = (board[c][l] == 0) ? '' : `player${board[c][l]}`
+      line.setAttribute('data-col-row', `(${c},${l})`)
+      line.setAttribute('id', `l${l}`)
       line.setAttribute('class', `line ${playerClass}`)
       line.addEventListener('click', function () {
         addEventListener(c + 1, l + 1)
