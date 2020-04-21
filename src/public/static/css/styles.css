@@ -1,8 +1,17 @@
 :root {
   --background-board-color: white;
-  --board-color: #007bff;
-  --player1-color: red;
-  --player2-color: green;
+  --board-color: #512da8;
+  --player1-color: radial-gradient(closest-side at 60% 30%, rgba(255, 255, 255, 1) 10%, rgba(0, 0, 0, 1) 100%);
+  --player2-color: radial-gradient(closest-side at 60% 30%, rgba(255, 255, 255, 1) 10%, rgba(234, 224, 200, 1) 100%);
+}
+
+.polygon {
+  background: url("/static/images/texture.jpg");
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+body {
+  background-color: #424242;
 }
 
 #tabuleiro div {
@@ -12,16 +21,19 @@
 
 .board {
   position: relative;
-  background: var(--background-board-color);
-  width: 276px;
-  height: 304px;
-  padding: 20px;
+  /* background: var(--background-board-color); */
+  width: 100%;
+  height: 100%;
+  /* padding: 20px; */
+  overflow: hidden;
 }
 
 .background-ui {
-  width: 276px;
-  height: 345px;
+  width: 100%;
+  height: 100%;
   float: left;
+  background: url("/static/images/texture.jpg");
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
 }
 
 .up,
@@ -42,27 +54,76 @@
 #rc {
   position: absolute;
   /* padding-top: 14px; */
+  width: 100%;
+  height: 100%;
 }
 
 .column {
   /* background-color: silver; */
   margin: 0 auto;
   float: left;
+  width: 9%;
+  height: 100%;
 }
 .line {
-  width: 13px;
-  background-color: white;
-  height: 15px;
+  /* width: 15px;
+  height: 15px; */
+  width: 56%;
+  height: 4%;
+  /* background-color: white; */
   line-height: 15px;
   text-align: center;
   border-radius: 30px;
-  border: solid 1px;
-  margin: 12px 5px;
+  /* border: solid 1px; */
+  /* margin: 14px 5px; */
+  margin: 76% 28%;
+  /* -moz-box-shadow: inset 0 0 4px #000000;
+  -webkit-box-shadow: inset 0 0 4px #000000;
+  box-shadow: inset -1px 3px 4px #000000; */
+  box-shadow: inset -0.2vmin 0.5vmin 0.6vmin #000000;
 }
 
 .player1 {
-  background-color: var(--player1-color);
+  background: var(--player1-color);
+  box-shadow: unset;
 }
 .player2 {
-  background-color: var(--player2-color);
+  background: var(--player2-color);
+  box-shadow: unset;
+}
+
+.box {
+  position: relative;
+  width: 100%; /* desired width */
+}
+
+.box:before {
+  content: "";
+  display: block;
+  padding-top: 100%; /* initial ratio of 1:1*/
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+/* Other ratios - just apply the desired class to the "box" element */
+.proportional:before {
+  padding-top: 125%;
+}
+.ratio2_1:before {
+  padding-top: 50%;
+}
+.ratio1_2:before {
+  padding-top: 200%;
+}
+.ratio4_3:before {
+  padding-top: 75%;
+}
+.ratio16_9:before {
+  padding-top: 56.25%;
 }

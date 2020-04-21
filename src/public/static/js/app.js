@@ -25,13 +25,14 @@ $(document).ready(function () {
 
 function drawBoard(board) {
   let hexagon = document.getElementById('rc');
-  let paddingTop = 75;
+  let paddingTop = 30;
   hexagon.innerHTML = ""
   for (let c = 0; c < board.length; c++) {
     let column = document.createElement('div')
     column.setAttribute('id', `c${c}`)
     column.setAttribute('class', 'column')
-    column.style.paddingTop = `${Math.abs(paddingTop)}px`
+    column.style.paddingTop = `${Math.abs(paddingTop)}%`
+    // column.style.height = `${100 - Math.abs(paddingTop)}%`
     for (let l = 0; l < board[c].length; l++) {
       let line = document.createElement('div')
       const playerClass = (board[c][l] == 0) ? '' : `player${board[c][l]}`
@@ -44,7 +45,7 @@ function drawBoard(board) {
       column.appendChild(line)
     }
     hexagon.appendChild(column)
-    paddingTop = paddingTop - 15;
+    paddingTop = paddingTop - 6;
   }
 }
 

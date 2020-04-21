@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // socket
 io.on("connection", socket => {
-  console.log("an user connected");
+  console.log("an user connected", socket.handshake.query);
 });
 io.of("/socket").on("connection", socket => {
   socket.emit("update");
@@ -31,5 +31,5 @@ io.of("/socket").on("connection", socket => {
 
 // start the Express server
 server.listen(port, () => {
-  console.log(`server started at http://localhost:${port}`);
+  console.log(`server started at http://0.0.0.0:${port}`);
 });
