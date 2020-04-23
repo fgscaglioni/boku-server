@@ -54,17 +54,6 @@ io.on("connection", socket => {
   });
 });
 
-function flatten(xs) {
-  return xs.reduce((acc, x) => {
-    acc = acc.concat(x);
-    if (x.items) {
-      acc = acc.concat(flatten(x.items));
-      x.items = [];
-    }
-    return acc;
-  }, []);
-}
-
 // start the Express server
 server.listen(port, () => {
   console.log(`server started at http://0.0.0.0:${port}`);

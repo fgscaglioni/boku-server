@@ -11,48 +11,26 @@ module.exports = (app: express.Application, io: socketio.Server, prefixRoom) => 
     next();
   });
 
-
-  app.get("/teste", (req, res) => {
-    if (!req.query.column || !req.query.line) res.status(400).json({
-      error: 'Column and line must be informed'
-    })
-    res.json({
-      requestParams: req.params,
-      requestBody: req.body,
-      requestQuery: req.query,
-      requestUrl: req.url
-    });
-  });
-
   app.get("/game_status", (req, res) => {
-    console.log('game_status 1', req.query.room);
-    if (!req.query.room) return
-    console.log('game_status 2', req.query.room);
-
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
 
-    let result = {
+    res.json({
       player: game.player,
       board: game.board,
       final: game.is_final_state(),
       available_moviments: game.get_available_moves(),
       num_movimentos: game.movements,
       last_move: { column: game.last_column, line: game.last_line }
-    }
-
-    res.json(result)
+    })
   });
 
   app.get("/is_my_turn", (req, res) => {
-    // console.log(req.query, game.player);
-    if (!req.query.room) return
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
     const player = req.query.player;
     (game.player != player) ? res.json(false) : res.json(true)
   });
 
   app.get("/player", (req, res) => {
-    if (!req.query.room) return
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
     if (game.ended) {
       res.json(0);
@@ -62,37 +40,31 @@ module.exports = (app: express.Application, io: socketio.Server, prefixRoom) => 
   });
 
   app.get("/board", (req, res) => {
-    if (!req.query.room) return
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
     res.json(game.board);
   });
 
   app.get("/final", (req, res) => {
-    if (!req.query.room) return
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
     res.json(game.is_final_state());
   });
 
   app.get("/available_moviments", (req, res) => {
-    if (!req.query.room) return
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
     res.json(game.get_available_moves());
   });
 
   app.get("/num_movimentos", (req, res) => {
-    if (!req.query.room) return
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
     res.json(game.movements);
   });
 
   app.get("/last_move", (req, res) => {
-    if (!req.query.room) return
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
     res.json({ column: game.last_column, line: game.last_line });
   });
 
   app.get("/restart", (req, res) => {
-    if (!req.query.room) return
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
     game.initializeBoard(null);
     io.sockets.in(req.query.room).emit('update')
@@ -100,7 +72,6 @@ module.exports = (app: express.Application, io: socketio.Server, prefixRoom) => 
   });
 
   app.get("/move", (req, res) => {
-    if (!req.query.room) return
     const game = io.sockets.adapter.rooms[req.query.room]['game'];
     const room = req.query.room;
     const coluna = Number(req.query.coluna);
