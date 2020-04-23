@@ -11,15 +11,10 @@ let board = [
   [0, 0, 0, 0, 0, 0],
   [0, 0, 0, 0, 0]
 ];
-
+let socket;
+let room;
 $(document).ready(function () {
-  //connect to the socket server.
-  var socket = io.connect('http://' + document.domain + ':' + location.port + '/socket');
-
-  //receive update signal from server
-  socket.on('update', function (msg) {
-    gameStatus();
-  });
+  joinRoom();
 });
 
 
@@ -52,7 +47,7 @@ function drawBoard(board) {
 function addEventListener(column, line) {
   player = parseInt($("#jogador").text());
   request(
-    `/move?player=${player}&coluna=${column}&linha=${line}`,
+    `/move?player=${player}&coluna=${column}&linha=${line}&room=${room}`,
     (result) => {
       $("#estado").html(result);
     });
@@ -89,3 +84,18 @@ function request(url, callback) {
     }
   });
 }
+
+function joinRoom() {
+  room = document.getElementById('room').value
+  socket = io.connect('http://' + document.domain + ':' + location.port, { query: `room=${room}` });
+  socket.on('update', function (msg) {
+    console.log('evento de update');
+    gameStatus();
+  });
+
+  socket.on('rooms', (rooms) => {
+    // console.log(Object.keys(rooms));
+    console.log(rooms);
+  })
+}
+

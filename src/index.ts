@@ -23,10 +23,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // socket
 io.on("connection", socket => {
-  console.log("an user connected", socket.handshake.query);
-});
-io.of("/socket").on("connection", socket => {
-  socket.emit("update");
+  console.log("1 - an user connected:", socket.handshake.query.room);
+  const room = socket.handshake.query.room || 'default'
+  console.log("room", room);
+  socket.join(room);
+  io.in(room).emit('update')
+  io.emit('rooms', io.sockets.adapter.rooms)
 });
 
 // start the Express server

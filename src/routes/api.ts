@@ -73,11 +73,12 @@ module.exports = (app: express.Application, io: socketio.Server) => {
   });
 
   app.get("/move", (req, res) => {
+    const room = req.query.room;
     const coluna = Number(req.query.coluna);
     const linha = Number(req.query.linha);
     const player = Number(req.query.player);
     const r = game.make_move(player, coluna, linha);
-    io.of('/socket').emit('update')
+    io.sockets.in(room).emit('update')
     res.json(r);
   });
 };
