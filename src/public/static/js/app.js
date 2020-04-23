@@ -12,9 +12,27 @@ let board = [
   [0, 0, 0, 0, 0]
 ];
 let socket;
-let room;
+let room = 'default';
+let rooms = [];
+
+
+
 $(document).ready(function () {
-  joinRoom();
+  // joinRoom();
+  const btnJoinEl = document.getElementById('btnJoin');
+  btnJoinEl.addEventListener('click', (ev) => {
+    room = document.getElementById('txtRoom').value
+    joinRoom()
+  })
+
+  const roomsEl = document.getElementById('rooms');
+  roomsEl.addEventListener('change', (ev) => {
+    console.log(ev.target.value);
+    room = ev.target.value
+    joinRoom()
+  })
+
+  joinRoom()
 });
 
 
@@ -35,7 +53,7 @@ function drawBoard(board) {
       line.setAttribute('id', `l${l}`)
       line.setAttribute('class', `line ${playerClass}`)
       line.addEventListener('click', function () {
-        addEventListener(c + 1, l + 1)
+        play(c + 1, l + 1)
       })
       column.appendChild(line)
     }
@@ -44,7 +62,7 @@ function drawBoard(board) {
   }
 }
 
-function addEventListener(column, line) {
+function play(column, line) {
   player = parseInt($("#jogador").text());
   request(
     `/move?player=${player}&coluna=${column}&linha=${line}&room=${room}`,
@@ -54,7 +72,7 @@ function addEventListener(column, line) {
 }
 
 function gameStatus() {
-  request('/game_status', (result) => {
+  request(`/game_status?room=${room}`, (result) => {
     drawBoard(result.board);
     $("#jogador").html(result.player);
     $("#movimentos").html(result.num_movimentos);
@@ -70,7 +88,7 @@ function reiniciar() {
   $("#estado").text('Aguardando movimento');
   $("#movimentos").text('0');
   $("#ultima_jogada").text('{"column":-1,"line":-1}');
-  request('/restart', () => { gameStatus(); })
+  request(`/restart?room=${room}`, () => { gameStatus(); })
 }
 
 function request(url, callback) {
@@ -86,16 +104,31 @@ function request(url, callback) {
 }
 
 function joinRoom() {
-  room = document.getElementById('room').value
+  // room = document.getElementById('room').value
   socket = io.connect('http://' + document.domain + ':' + location.port, { query: `room=${room}` });
   socket.on('update', function (msg) {
     console.log('evento de update');
     gameStatus();
   });
 
-  socket.on('rooms', (rooms) => {
-    // console.log(Object.keys(rooms));
-    console.log(rooms);
+  socket.on('rooms', (availableRooms) => {
+    rooms = availableRooms.rooms
+    listRooms()
   })
+}
+
+function listRooms() {
+  console.log(rooms);
+  const roomsEl = document.getElementById('rooms')
+
+  roomsEl.innerHTML = ""
+  for (const room of rooms) {
+    const el = document.createElement('option')
+    el.id = room;
+    el.value = room;
+    el.text = room;
+    roomsEl.appendChild(el)
+  }
+
 }
 

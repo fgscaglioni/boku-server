@@ -127,3 +127,8 @@ body {
 .ratio16_9:before {
   padding-top: 56.25%;
 }
+
+.pure-u-1 {
+  padding: 20px;
+  box-sizing: border-box;
+}
