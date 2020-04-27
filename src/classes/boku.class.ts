@@ -2,6 +2,7 @@ import * as _ from "lodash";
 export class Boku {
   board: Array<Array<number>> = [];
   player: number = 1;
+  players = []
   ended: boolean = false;
   waiting_removal: boolean = false;
   forbidden_moves = null;
@@ -34,7 +35,7 @@ export class Boku {
     [1, 5]
   ];
 
-  initializeBoard(params?: {}) {
+  constructor(params?) {
     this.ended = false;
     this.board = [];
     this.player = 1;
@@ -46,6 +47,27 @@ export class Boku {
 
     let height = 0;
 
+    for (let column = 0; column < 11; column++) {
+      if (column <= 5) {
+        height = 5 + column;
+      } else {
+        height = 15 - column;
+      }
+      this.board.push(_.times(height, _.constant(0)));
+    }
+  }
+
+  restartGame() {
+    this.ended = false;
+    this.board = [];
+    this.player = 1;
+    this.waiting_removal = false;
+    this.forbidden_moves = null;
+    this.movements = 0;
+    this.last_column = -1;
+    this.last_line = -1;
+
+    let height = 0;
     for (let column = 0; column < 11; column++) {
       if (column <= 5) {
         height = 5 + column;

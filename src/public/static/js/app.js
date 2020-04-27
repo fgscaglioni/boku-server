@@ -1,38 +1,101 @@
-let board = [
-  [0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0]
-];
+// let board = [
+//   [0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0, 0],
+//   [0, 0, 0, 0, 0]
+// ];
 let socket;
 let room = 'default';
 let rooms = [];
+let player = 0;
+
+function createRoom(query) {
+
+  if (socket) socket.disconnect();
+  socket = io.connect('http://' + document.domain + ':' + location.port, { query });
+
+  socket.on('update', function (msg) {
+    // console.log('evento de update');
+    gameStatus();
+  });
+
+  socket.on('connected', (id) => {
+    console.log(id);
+  })
+  socket.on('disconnect', (id) => {
+    console.log(id);
+  })
+
+  socket.on('error', (error) => {
+    console.log(error);
+  })
+
+  socket.on('onCommand', (command) => {
+    // console.log(command);
+  })
+}
+
+function socketEvents() {
+  if (socket) socket.disconnect();
+  socket = io.connect('http://' + document.domain + ':' + location.port);
+  socket.on('rooms', (availableRooms) => {
+    console.log('available rooms', availableRooms);
+    rooms = availableRooms.rooms
+    listRooms()
+  })
+  socket.on('player_connected', (player_number) => {
+    player = player_number
+    console.log('você é o jogador' + player);
+    $("#localPlayer").html("você é o jogador: " + player)
+  })
+  socket.on('update', (msg) => {
+    console.log('update', msg);
+    gameStatus();
+  });
+  socket.on('room_status', (status) => {
+    console.log(status.code, status.message);
+  });
+  socket.on('error', (error) => {
+    console.log(error);
+  });
+
+}
 
 
 
 $(document).ready(function () {
-  // joinRoom();
+  socketEvents()
+
   const btnJoinEl = document.getElementById('btnJoin');
   btnJoinEl.addEventListener('click', (ev) => {
     room = document.getElementById('txtRoom').value
-    joinRoom()
+    const playerName = document.getElementById('txtPlayerName').value
+    socket.emit('create_room', {
+      command: 'create',
+      room: room,
+      player,
+      playerName
+    })
   })
 
   const roomsEl = document.getElementById('rooms');
   roomsEl.addEventListener('change', (ev) => {
     console.log(ev.target.value);
     room = ev.target.value
-    joinRoom()
+    socket.emit('join_room', {
+      command: 'join',
+      room: room,
+      player
+    })
   })
 
-  joinRoom()
 });
 
 
@@ -63,7 +126,7 @@ function drawBoard(board) {
 }
 
 function play(column, line) {
-  player = parseInt($("#jogador").text());
+  // player = parseInt($("#jogador").text());
   request(
     `/move?player=${player}&coluna=${column}&linha=${line}&room=${room}`,
     (result) => {
@@ -73,6 +136,8 @@ function play(column, line) {
 
 function gameStatus() {
   request(`/game_status?room=${room}`, (result) => {
+    // console.log(result);
+
     drawBoard(result.board);
     $("#jogador").html(result.player);
     $("#movimentos").html(result.num_movimentos);
@@ -103,25 +168,17 @@ function request(url, callback) {
   });
 }
 
-function joinRoom() {
-  // room = document.getElementById('room').value
-  socket = io.connect('http://' + document.domain + ':' + location.port, { query: `room=${room}` });
-  socket.on('update', function (msg) {
-    console.log('evento de update');
-    gameStatus();
-  });
-
-  socket.on('rooms', (availableRooms) => {
-    rooms = availableRooms.rooms
-    listRooms()
-  })
-}
-
 function listRooms() {
-  console.log(rooms);
+  // console.log(rooms);
   const roomsEl = document.getElementById('rooms')
-
   roomsEl.innerHTML = ""
+
+  const first = document.createElement('option')
+  first.id = '';
+  first.value = '';
+  first.text = '';
+  roomsEl.appendChild(first)
+
   for (const room of rooms) {
     const el = document.createElement('option')
     el.id = room;

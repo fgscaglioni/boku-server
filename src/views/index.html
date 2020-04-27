@@ -50,6 +50,10 @@
         <table>
           <thead>
             <tr>
+              <td><strong>LOCALPLAYER</strong></td>
+              <td><span id="localPlayer"></span></td>
+            </tr>
+            <tr>
               <td><strong>Turno</strong></td>
               <td><span id="jogador">1</span></td>
             </tr>
@@ -75,9 +79,12 @@
         <br>
         <br>
 
+        <label for="txtRoom">Novo jogo</label> <br>
+        <input type="text" id="txtRoom" placeholder="Nome da sala">
+        <input type="text" id="txtPlayerName" placeholder="Nome do jogador">
+        <input type="button" id="btnJoin" value="Criar sala" style="margin-top:20px"> <br><br>
 
-        <input type="text" id="txtRoom">
-        <input type="button" id="btnJoin" value="Join room" style="margin-top:20px">
+        <label for="rooms">Selecione uma sala</label>
         <select name="rooms" id="rooms">
         </select>
 
