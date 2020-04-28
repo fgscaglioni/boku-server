@@ -141,9 +141,19 @@ function gameStatus() {
     drawBoard(result.board);
     $("#jogador").html(result.player);
     $("#movimentos").html(result.num_movimentos);
+    console.log(result.last_move);
     $("#ultima_jogada").text(JSON.stringify(result.last_move));
     if (result.final != null) {
       $("#estado").html(result.final + ' wins!');
+    }
+
+    if (result.last_move.column > -1 && result.player == player) {
+      const column = result.last_move.column - 1;
+      const line = result.last_move.line - 1;
+      const lastMoveEl = document
+        .querySelector(`#c${result.last_move.column - 1}`)
+        .querySelector(`#l${result.last_move.line - 1}`)
+      lastMoveEl.classList.add('last-move')
     }
   });
 }

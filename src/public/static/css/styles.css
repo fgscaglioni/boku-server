@@ -3,6 +3,7 @@
   --board-color: #512da8;
   --player1-color: radial-gradient(closest-side at 60% 30%, rgba(255, 255, 255, 1) 10%, rgba(0, 0, 0, 1) 100%);
   --player2-color: radial-gradient(closest-side at 60% 30%, rgba(255, 255, 255, 1) 10%, rgba(234, 224, 200, 1) 100%);
+  --flash-color: radial-gradient(closest-side at 60% 30%, rgba(255, 255, 255, 1) 10%, rgba(76, 183, 64, 1) 100%);
 }
 
 .polygon {
@@ -131,4 +132,15 @@ body {
 .pure-u-1 {
   padding: 20px;
   box-sizing: border-box;
+}
+
+.last-move {
+  animation: blink 1s;
+  animation-iteration-count: 4;
+}
+
+@keyframes blink {
+  50% {
+    background: var(--flash-color);
+  }
 }
