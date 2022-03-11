@@ -12,7 +12,22 @@
     "Database": "database",
     "Contracts": "contracts"
   },
-  "preloads": ["./start/routes", "./start/kernel"],
-  "providers": ["./providers/AppProvider", "@adonisjs/core"],
-  "aceProviders": ["@adonisjs/repl"]
+  "preloads": [
+    "./start/routes",
+    "./start/kernel"
+  ],
+  "providers": [
+    "./providers/AppProvider",
+    "@adonisjs/core",
+    "@adonisjs/view"
+  ],
+  "aceProviders": [
+    "@adonisjs/repl"
+  ],
+  "metaFiles": [
+    {
+      "pattern": "resources/views/**/*.edge",
+      "reloadServer": false
+    }
+  ]
 }

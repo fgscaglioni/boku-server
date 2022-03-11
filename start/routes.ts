@@ -31,8 +31,8 @@ Route.group(() => {
   Route.get('last_move', 'GamesController.lastMove')
   Route.get('restart', 'GamesController.restart')
   Route.get('move', 'GamesController.move')
-})
+}).prefix('api')
 
-Route.get('/', async () => {
-  return { hello: 'world' }
+Route.get('/', async ({ view }) => {
+  return view.render('home')
 })
