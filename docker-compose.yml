@@ -1,0 +1,15 @@
+version: '3.9'
+
+services:
+  doku-server:
+    container_name: doku-server
+    build:
+        context: .
+        dockerfile: .docker/Dockerfile
+    entrypoint: .docker/entrypoint.sh
+    ports:
+        - 3000:3000
+    volumes:
+        - .:/home/node/app
+    environment:
+        STORAGE: /var/www/storage/
