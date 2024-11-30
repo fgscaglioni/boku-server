@@ -22,14 +22,30 @@ export class Boku {
         this.reset()
     }
 
-    getBoard() {
+    getBoard(): Board {
+        console.log('BOARD');
+        console.table(this.board)
+        console.log('BOARD TRANSPOSED');
+        console.table(this.board.map((x, i) => this.board.map(x => x[i])))
         return this.board
     }
-    printBoard() {
+    printBoard(): void {
         console.table(this.board)
     }
 
-    reset() {
+    getLastMove() {
+        return [this.last_column, this.last_line]
+    }
+
+    getMovements() {
+        return this.movements
+    }
+
+    getPlayer() {
+        return (this.ended) ? 0 : this.player
+    }
+
+    reset(): void {
         this.ended = false;
         this.board = [];
         this.player = 1;
@@ -50,11 +66,11 @@ export class Boku {
         }
     }
 
-    private getPosition(column: number, line: number) {
+    private getPosition(column: number, line: number): number {
         return this.board[column - 1][line - 1];
     }
 
-    private setPosition({ player: state, column, line }: Move) {
+    private setPosition({ player: state, column, line }: Move): Board {
         // let b = _.clone(this.board);
         // let b = Object.assign({}, this.board);
         // b[column - 1][line - 1] = state;
@@ -70,7 +86,7 @@ export class Boku {
 
     // // Get a fixed-size list of neighbors: [top, top-right, top-left, down, down-right, down-left].
     // // null at any of those places where there's no neighbor
-    neighbors(column: number, line: number) {
+    neighbors(board: Board, column: number, line: number) {
         let l = [];
 
         if (line > 1) {
@@ -79,7 +95,7 @@ export class Boku {
             l.push(null);
         }
 
-        if ((column < 6 || line > 1) && column < this.board.length) {
+        if ((column < 6 || line > 1) && column < board.length) {
             if (column >= 6) {
                 l.push([column + 1, line - 1]); //// upper right
             } else {
@@ -99,15 +115,15 @@ export class Boku {
             l.push(null);
         }
 
-        if (line < this.board[column - 1].length) {
+        if (line < board[column - 1].length) {
             l.push([column, line + 1]); //// down
         } else {
             l.push(null);
         }
 
         if (
-            (column < 6 || line < this.board[column - 1].length) &&
-            column < this.board.length
+            (column < 6 || line < board[column - 1].length) &&
+            column < board.length
         ) {
             if (column < 6) {
                 l.push([column + 1, line + 1]); // down right
@@ -118,7 +134,7 @@ export class Boku {
             l.push(null);
         }
 
-        if ((column > 6 || line < this.board[column - 1].length) && column > 1) {
+        if ((column > 6 || line < board[column - 1].length) && column > 1) {
             if (column > 6) {
                 l.push([column - 1, line + 1]); // down left
             } else {
@@ -135,6 +151,7 @@ export class Boku {
     // Returns (player,[positions]), where [positions] is a list of the two possibilities to be removed
     can_remove(player: number) {
         if (this.last_column < 0 || this.last_line < 0) return null;
+        return null
         let removals = [];
         let l = [];
         let s = "";
@@ -181,6 +198,14 @@ export class Boku {
             ]);
         }
 
+
+
+
+
+
+
+
+
         let col = this.last_column;
         let line = this.last_line;
         let coords: any = [col, line];
@@ -209,7 +234,7 @@ export class Boku {
                 );
                 removals.push(sub);
             }
-            coords = this.neighbors(column, line)[1];
+            coords = this.neighbors(this.board, column, line)[1];
             if (coords == null) {
                 break;
             }
@@ -243,7 +268,7 @@ export class Boku {
                 );
                 removals.push(sub);
             }
-            coords = this.neighbors(column, line)[5];
+            coords = this.neighbors(this.board, column, line)[5];
             if (coords == null) {
                 break;
             }
@@ -279,7 +304,7 @@ export class Boku {
                 );
                 removals.push(sub);
             }
-            coords = this.neighbors(column, line)[2];
+            coords = this.neighbors(this.board, column, line)[2];
             if (coords == null) {
                 break;
             }
@@ -313,7 +338,7 @@ export class Boku {
                 );
                 removals.push(sub);
             }
-            coords = this.neighbors(column, line)[4];
+            coords = this.neighbors(this.board, column, line)[4];
             if (coords == null) {
                 break;
             }
@@ -331,7 +356,7 @@ export class Boku {
 
 
     // Check if a board is in an end-game state. Returns the winning player or None.
-    is_final_state() {
+    is_final_state(): FinalState {
 
         // test vertical
         for (let column = 0; column < this.board.length; column++) {
@@ -339,8 +364,14 @@ export class Boku {
             for (let line = 0; line < this.board[column].length; line++) {
                 status += String(this.board[column][line])
 
-                if (status.indexOf("11111") > -1) return 1;
-                if (status.indexOf("22222") > -1) return 2;
+                if (status.indexOf("11111") > -1) return {
+                    finalState: true,
+                    player: 1
+                };
+                if (status.indexOf("22222") > -1) return {
+                    finalState: true,
+                    player: 2
+                };
             }
         }
 
@@ -356,9 +387,15 @@ export class Boku {
                 let line = coords[1];
                 let state = this.board[column - 1][line - 1];
                 s += String(state);
-                if (s.indexOf("11111") > -1) return 1
-                if (s.indexOf("22222") > -1) return 2;
-                let neighbor = this.neighbors(column, line);
+                if (s.indexOf("11111") > -1) return {
+                    finalState: true,
+                    player: 1
+                }
+                if (s.indexOf("22222") > -1) return {
+                    finalState: true,
+                    player: 2
+                };
+                let neighbor = this.neighbors(this.board, column, line);
                 coords = neighbor[1];
             }
         };
@@ -376,17 +413,23 @@ export class Boku {
                 let line = coords[1];
                 let state = this.board[column - 1][line - 1];
                 s += String(state);
-                if (s.indexOf("11111") > -1) return 1;
-                if (s.indexOf("22222") > -1) return 2;
-                coords = this.neighbors(column, line)[4];
+                if (s.indexOf("11111") > -1) return {
+                    finalState: true,
+                    player: 1
+                };
+                if (s.indexOf("22222") > -1) return {
+                    finalState: true,
+                    player: 2
+                };
+                coords = this.neighbors(this.board, column, line)[4];
             }
         };
 
-        return null;
+        return { finalState: false };
     }
 
     // Returns a list of positions available on a board
-    getAvailableMoves() {
+    getAvailableMoves(): Board {
         let l = [];
         let removal_options = this.can_remove(this.player);
 
@@ -407,7 +450,7 @@ export class Boku {
         }
     }
 
-    getAvailableBoards() {
+    getAvailableBoards(): Board[] {
         let l = this.getAvailableMoves();
         let possible_boards: any = [];
 
@@ -420,39 +463,56 @@ export class Boku {
         return this.player, possible_boards;
     }
 
-    takeTurn() {
+    takeTurn(): number {
         return (this.player = this.player == 1 ? 2 : 1);
     }
 
-    private validateMove(move: Move) {
+    private validateMove(move: Move): ValidMove {
         if (this.ended) {
-            return new GameOverResponse()
+            return {
+                valid: false,
+                error: new GameOverResponse()
+            }
         }
 
         if (move.player != this.player) {
-            return new NotYourTurnResponse()
+            return {
+                valid: false,
+                error: new NotYourTurnResponse()
+            }
         }
 
         if (move.column - 1 > this.board.length || move.column < 0) {
-            return new NoSuchColumnResponse()
+            return {
+                valid: false,
+                error: new NoSuchColumnResponse()
+            }
         }
 
         if (move.line < 0 || move.line > this.board[move.column - 1].length) {
-            return new NoSuchLineResponse(move.column)
+            return {
+                valid: false,
+                error: new NoSuchLineResponse(move.column)
+            }
         }
 
         if (Object.is([move.column, move.line], this.forbidden_moves)) {
-            return new PositionNotAvailableResponse(move.column, move.line)
+            return {
+                valid: false,
+                error: new PositionNotAvailableResponse(move.column, move.line)
+            }
         }
 
-        return "success"
+        return {
+            valid: true
+        }
     }
 
-    move({ player, column, line }: Move) {
+    move({ player, column, line }: Move): MoveResponse {
 
-        const output = this.validateMove({ player, column, line })
-        if (output !== "success") {
-            return output
+        const move = this.validateMove({ player, column, line })
+        if (!move.valid && move.error) {
+            return move.error
         }
 
         let state;
@@ -467,7 +527,7 @@ export class Boku {
                     this.forbidden_moves = [column, line];
                     forbidden_just_set = true;
                 } else {
-                    return [-6, "Invalid removal"];
+                    return new InvalidRemovalResponse()
                 }
             } else {
                 state = player;
@@ -485,9 +545,9 @@ export class Boku {
 
         let f = this.is_final_state();
 
-        if (f != null) {
+        if (f.finalState && f.player) {
             this.ended = true;
-            return [0, f + " wins"];
+            return new WinnerResponse(f.player)
         }
 
         this.last_line = line;
@@ -519,6 +579,18 @@ type Move = {
     line: number
 }
 type Board = Array<Array<number>>
+type FinalState = {
+    finalState: boolean
+    player?: number
+}
+type ValidMove = {
+    valid: boolean
+    error?: GameOverResponse | NotYourTurnResponse | NoSuchColumnResponse | NoSuchLineResponse | PositionNotAvailableResponse
+}
+type MoveResponse = InvalidRemovalResponse | PositionNotAvailableResponse
+    | WinnerResponse | GameOverResponse
+    | NotYourTurnResponse | NoSuchColumnResponse
+    | NoSuchLineResponse | PositionNotAvailableResponse
 
 
 

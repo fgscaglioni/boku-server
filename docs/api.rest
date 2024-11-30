@@ -1,0 +1,31 @@
+@hostname = http://localhost
+@port = 3000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+###
+GET {{host}}/api/restart
+
+
+###
+GET {{host}}/api/move?player=2&column=3&line=1
+
+
+###
+GET {{host}}/api/board
+
+
+###
+GET {{host}}/api/last-move
+
+
+###
+GET {{host}}/api/movements-number
+
+
+###
+GET {{host}}/api/available-moves
+
+
+###
+GET {{host}}/api/player

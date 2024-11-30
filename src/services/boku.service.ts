@@ -20,8 +20,24 @@ export class BokuService {
         return this.boku.move({ player, column, line })
     }
 
-    board() {
+    getBoard() {
         return this.boku.getBoard()
+    }
+
+    getLastMove() {
+        return this.boku.getLastMove()
+    }
+
+    getMovementsNumber() {
+        return this.boku.getMovements()
+    }
+
+    getAvailableMoves() {
+        return this.boku.getAvailableMoves()
+    }
+
+    getPlayer() {
+        return this.boku.getPlayer()
     }
 
 }

@@ -18,54 +18,53 @@ let player = 0;
 
 function createRoom(query) {
 
-    if (socket) socket.disconnect();
-    socket = io.connect('http://' + document.domain + ':' + location.port, { query });
+    // if (socket) socket.disconnect();
+    // socket = io.connect('http://' + document.domain + ':' + location.port, { query });
 
-    socket.on('update', function (msg) {
-        // console.log('evento de update');
-        gameStatus();
-    });
+    // socket.on('update', function (msg) {
+    //     // console.log('evento de update');
+    //     gameStatus();
+    // });
 
-    socket.on('connected', (id) => {
-        console.log(id);
-    })
-    socket.on('disconnect', (id) => {
-        console.log(id);
-    })
+    // socket.on('connected', (id) => {
+    //     console.log(id);
+    // })
+    // socket.on('disconnect', (id) => {
+    //     console.log(id);
+    // })
 
-    socket.on('error', (error) => {
-        console.log(error);
-    })
+    // socket.on('error', (error) => {
+    //     console.log(error);
+    // })
 
-    socket.on('onCommand', (command) => {
-        // console.log(command);
-    })
+    // socket.on('onCommand', (command) => {
+    //     // console.log(command);
+    // })
 }
 
 function socketEvents() {
-    if (socket) socket.disconnect();
-    socket = io.connect('http://' + document.domain + ':' + location.port);
-    socket.on('room_list', (availableRooms) => {
-        console.log('available rooms', availableRooms);
-        rooms = availableRooms.rooms
-        listRooms()
-    })
-    socket.on('player_connected', (player_number) => {
-        player = player_number
-        console.log('você é o jogador' + player);
-        $("#localPlayer").html("você é o jogador: " + player)
-    })
-    socket.on('refresh', (msg) => {
-        console.log('refresh', msg);
-        gameStatus();
-    });
-    socket.on('room_status', (status) => {
-        console.log(status.code, status.message);
-    });
-    socket.on('error', (error) => {
-        console.log(error);
-    });
-
+    // if (socket) socket.disconnect();
+    // socket = io.connect('http://' + document.domain + ':' + location.port);
+    // socket.on('room_list', (availableRooms) => {
+    //     console.log('available rooms', availableRooms);
+    //     rooms = availableRooms.rooms
+    //     listRooms()
+    // })
+    // socket.on('player_connected', (player_number) => {
+    //     player = player_number
+    //     console.log('você é o jogador' + player);
+    //     $("#localPlayer").html("você é o jogador: " + player)
+    // })
+    // socket.on('refresh', (msg) => {
+    //     console.log('refresh', msg);
+    //     gameStatus();
+    // });
+    // socket.on('room_status', (status) => {
+    //     console.log(status.code, status.message);
+    // });
+    // socket.on('error', (error) => {
+    //     console.log(error);
+    // });
 }
 
 
@@ -140,47 +139,61 @@ function drawBoard(board) {
         hexagon.appendChild(column)
         paddingTop = paddingTop - 6;
     }
+    console.log(board.map((x, i) => board.map(x => x[i])))
 }
 
 function play(column, line) {
     // player = parseInt($("#jogador").text());
-    request(
-        `/move?player=${player}&coluna=${column}&linha=${line}&room=${room}`,
-        (result) => {
-            $("#estado").html(result);
+
+
+    request(`/api/player`, (player) => {
+        request(`/api/move?player=${player}&column=${column}&line=${line}`, (result) => {
+            // console.log(result);
+            // $("#estado").html(result);
+
+            gameStatus()
         });
+    });
 
 
-    socket.emit('play', { player: 1, column, line, room }, (data) => {
-        console.log({ data });
-    })
+
+
+    // socket.emit('play', { player: 1, column, line, room }, (data) => {
+    //     console.log({ data });
+    // })
 }
 
 function gameStatus() {
-    socket.emit('refresh', { room: 'asdf' }, (data) => {
-        console.log(data)
-        // console.log(result);
 
-        const game = data.game
-
-        drawBoard(game.board);
-        $("#jogador").html(game.player);
-        $("#movimentos").html(game.num_movimentos);
-        // console.log(result.last_move);
-        // $("#ultima_jogada").text(JSON.stringify(result.last_move));
-        // if (result.final != null) {
-        //     $("#estado").html(result.final + ' wins!');
-        // }
-
-        // if (result.last_move.column > -1 && result.player == player) {
-        //     const column = result.last_move.column - 1;
-        //     const line = result.last_move.line - 1;
-        //     const lastMoveEl = document
-        //         .querySelector(`#c${result.last_move.column - 1}`)
-        //         .querySelector(`#l${result.last_move.line - 1}`)
-        //     lastMoveEl.classList.add('last-move')
-        // }
+    request(`/api/board`, (board) => {
+        drawBoard(board);
     });
+
+
+    // socket.emit('refresh', { room: 'asdf' }, (data) => {
+    //     console.log(data)
+    //     // console.log(result);
+
+    //     const game = data.game
+
+    //     drawBoard(game.board);
+    //     $("#jogador").html(game.player);
+    //     $("#movimentos").html(game.num_movimentos);
+    //     // console.log(result.last_move);
+    //     // $("#ultima_jogada").text(JSON.stringify(result.last_move));
+    //     // if (result.final != null) {
+    //     //     $("#estado").html(result.final + ' wins!');
+    //     // }
+
+    //     // if (result.last_move.column > -1 && result.player == player) {
+    //     //     const column = result.last_move.column - 1;
+    //     //     const line = result.last_move.line - 1;
+    //     //     const lastMoveEl = document
+    //     //         .querySelector(`#c${result.last_move.column - 1}`)
+    //     //         .querySelector(`#l${result.last_move.line - 1}`)
+    //     //     lastMoveEl.classList.add('last-move')
+    //     // }
+    // });
 
 
 }
@@ -190,7 +203,7 @@ function reiniciar() {
     $("#estado").text('Aguardando movimento');
     $("#movimentos").text('0');
     $("#ultima_jogada").text('{"column":-1,"line":-1}');
-    request(`/restart?room=${room}`, () => { gameStatus(); })
+    request(`/api/restart`, () => { gameStatus(); })
 }
 
 function request(url, callback) {
